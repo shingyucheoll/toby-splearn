@@ -4,8 +4,9 @@ import static org.springframework.util.Assert.*;
 
 import java.util.Objects;
 
-import org.springframework.data.annotation.Id;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,8 @@ import lombok.ToString;
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+@SuppressWarnings("NullAway.Init")  // JPA requires no-arg constructor for lazy initialization
 public class Member {
 
 	@Id

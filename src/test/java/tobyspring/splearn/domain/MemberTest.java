@@ -33,10 +33,12 @@ class MemberTest {
 
 	 */
 	@Test
+	@SuppressWarnings("NullAway")
 	void constructorNullCheck() {
 
 		// assertThatThrownBy ( function )  -> 예외가 발생하는지 확인
 		// assertThatThrownBy(function).isInstanceOf ( Exception.class ) -> 어떤 타입의 예외가 발생하는지 확인
+
 		assertThatThrownBy(() -> new Member(null, "Toby", "secret"))
 			// .isInstanceOf(IOException.class);     -> 다른 타입의 예외 발생 시 테스트 실패
 			.isInstanceOf(NullPointerException.class);
