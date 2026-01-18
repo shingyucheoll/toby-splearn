@@ -4,7 +4,6 @@ import static org.springframework.util.Assert.*;
 
 import java.util.Objects;
 
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
@@ -23,7 +22,7 @@ public class Member {
 	@Id
 	private String email;
 
-	private String nickName;
+	private String nickname;
 
 	private String passwordHash;
 
@@ -31,16 +30,33 @@ public class Member {
 
 	// Entity의 상태의 변경은 Setter를 사용하지 않고
 	// 특정 행위가 발생했을 때 일괄적으로 처리할 수 있도록 메서드 형태로 정의하는게 가장 좋습니다.
-	public Member(
+	private Member(
 		String email,
-		String nickName,
+		String nickname,
 		String passwordHash
 	) {
 		// Not Null 필드에 대해 Objects 에서 지원하는 requireNonNull 사용 - Null일 경우 NPE 발생
 		this.email = Objects.requireNonNull(email);
-		this.nickName = Objects.requireNonNull(nickName);
+		this.nickname = Objects.requireNonNull(nickname);
 		this.passwordHash = Objects.requireNonNull(passwordHash);
+
 		this.status = MemberStatus.PENDING;    // Member 생성 시 상태를 직접 저장합니다.
+	}
+
+	public static Member create(
+		String email,
+		String nickname,
+		String password,
+		PasswordEncoder passwordEncoder
+	) {
+		String passwordHash = passwordEncoder.encode(password);
+		System.out.println("passwordHash = " + passwordHash);
+
+		return new Member(
+			email,
+			nickname,
+			passwordHash
+		);
 	}
 
 	public void activate() {
@@ -60,5 +76,17 @@ public class Member {
 		state(status == MemberStatus.ACTIVATE, "ACTIVE 상태가 아닙니다.");
 
 		this.status = MemberStatus.DEACTIVATED;
+	}
+
+	public boolean verifyPassword(String password, PasswordEncoder passwordEncoder) {
+		return passwordEncoder.matches(password, passwordHash);
+	}
+
+	public void changeNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+	public void changePassword(String password, PasswordEncoder passwordEncoder) {
+		this.passwordHash = passwordEncoder.encode(password);
 	}
 }

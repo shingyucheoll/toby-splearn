@@ -2,14 +2,43 @@ package tobyspring.splearn.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class MemberTest {
 
+	Member member;
+
+	PasswordEncoder passwordEncoder;
+
+	// @BeforeEach: 각 테스트 메서드 실행 전마다 호출
+	// @AfterEach: 각 테스트 메서드 실행 후마다 호출
+	// @BeforeAll: 클래스의 모든 테스트 실행 전 1회만 호출 (static 메서드)
+	// @AfterAll: 클래스의 모든 테스트 실행 후 1회만 호출 (static 메서드)
+	@BeforeEach
+	void setUp() {
+		this.passwordEncoder = new PasswordEncoder() {
+			@Override
+			public String encode(String password) {
+				return password.toUpperCase();
+			}
+
+			@Override
+			public boolean matches(String password, String passwordHash) {
+				return encode(password).equals(passwordHash);
+			}
+		};
+
+		member = Member.create(
+			"toby@splearn.app",
+			"Toby",
+			"secret",
+			passwordEncoder
+		);
+	}
+
 	@Test
 	void createMember() {
-		// Test Code에서는 var 활용하는것을 지향 - 테스트에 조금 더 집중할 수 있도록
-		var member = new Member("toby@splearn.app", "Toby", "secret");
 
 		assertThat(member.getStatus()).isEqualTo(MemberStatus.PENDING);
 	}
@@ -33,21 +62,7 @@ class MemberTest {
 
 	 */
 	@Test
-	@SuppressWarnings("NullAway")
-	void constructorNullCheck() {
-
-		// assertThatThrownBy ( function )  -> 예외가 발생하는지 확인
-		// assertThatThrownBy(function).isInstanceOf ( Exception.class ) -> 어떤 타입의 예외가 발생하는지 확인
-
-		assertThatThrownBy(() -> new Member(null, "Toby", "secret"))
-			// .isInstanceOf(IOException.class);     -> 다른 타입의 예외 발생 시 테스트 실패
-			.isInstanceOf(NullPointerException.class);
-	}
-
-	@Test
 	void activate() {
-		var member = new Member("toby", "Toby", "secret");
-
 		member.activate();
 
 		assertThat(member.getStatus()).isEqualTo(MemberStatus.ACTIVATE);
@@ -55,8 +70,6 @@ class MemberTest {
 
 	@Test
 	void activateFail() {
-		var member = new Member("toby", "Toby", "secret");
-
 		member.activate();
 
 		assertThatThrownBy(member::activate)
@@ -68,7 +81,6 @@ class MemberTest {
 	@Test
 	void deactivate() {
 		// given
-		var member = new Member("toby", "Toby", "secret");
 		member.activate();
 
 		// when
@@ -84,13 +96,36 @@ class MemberTest {
 		// given, when, then 과 같은 주석 처리 또한 template 형태로 계속 작성하는게 아닌, 어느정도 TDD 레벨이 올라왔을 땐
 		// 개행 정도로만 구분하여 빠르게 테스트를 작성할 수 있도록 합니다.
 	void deactivateFail() {
-		var member = new Member("toby", "Toby", "secret");
-
 		assertThatThrownBy(member::deactivate).isInstanceOf(IllegalStateException.class);
 
 		member.activate();
 		member.deactivate();
 
 		assertThatThrownBy(member::deactivate).isInstanceOf(IllegalStateException.class);
+	}
+
+	@Test
+	void verifyPassword() {
+		assertThat(member.verifyPassword("secret", passwordEncoder)).isTrue();
+		assertThat(member.verifyPassword("hello", passwordEncoder)).isFalse();
+	}
+
+	@Test
+	void changeNickname() {
+		assertThat(member.getNickname()).isEqualTo("Toby");
+		
+		member.changeNickname("Charlie");
+		
+		assertThat(member.getNickname()).isEqualTo("Charlie");
+	}
+
+	@Test
+	void changePassword() {
+		member.changePassword("verySecret", passwordEncoder);
+
+		assertThat(member.verifyPassword("verySecret", passwordEncoder)).isTrue();
+
+		System.out.println(member.getPasswordHash());
+
 	}
 }
