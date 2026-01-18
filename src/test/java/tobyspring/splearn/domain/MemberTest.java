@@ -29,12 +29,13 @@ class MemberTest {
 			}
 		};
 
-		member = Member.create(
+		MemberCreateRequest memberCreateRequest = new MemberCreateRequest(
 			"toby@splearn.app",
 			"Toby",
-			"secret",
-			passwordEncoder
+			"secret"
 		);
+
+		member = Member.create(memberCreateRequest, passwordEncoder);
 	}
 
 	@Test
@@ -113,9 +114,9 @@ class MemberTest {
 	@Test
 	void changeNickname() {
 		assertThat(member.getNickname()).isEqualTo("Toby");
-		
+
 		member.changeNickname("Charlie");
-		
+
 		assertThat(member.getNickname()).isEqualTo("Charlie");
 	}
 
@@ -127,5 +128,18 @@ class MemberTest {
 
 		System.out.println(member.getPasswordHash());
 
+	}
+
+	@Test
+	void isActive() {
+		assertThat(member.isActive()).isFalse();
+
+		member.activate();
+
+		assertThat(member.isActive()).isTrue();
+
+		member.deactivate();
+
+		assertThat(member.isActive()).isFalse();
 	}
 }
