@@ -3,6 +3,9 @@ package tobyspring.splearn.domain;
 import static java.util.Objects.*;
 import static org.springframework.util.Assert.*;
 
+import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
+
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -22,6 +25,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SuppressWarnings("NullAway.Init")  // JPA requires no-arg constructor for lazy initialization
+@NaturalIdCache
 public class Member {
 
 	@Id
@@ -33,6 +37,7 @@ public class Member {
 	// JPA Embedded: 해당 필드가 다른곳에서 정의된 Embeddable 타입을 내장하고 있음을 나타내며
 	// 해당 필드의 속성들이 엔티티 테이블의 컬럼으로 포함됩니다.
 	@Embedded
+	@NaturalId
     private Email email;
 
     private String nickname;
