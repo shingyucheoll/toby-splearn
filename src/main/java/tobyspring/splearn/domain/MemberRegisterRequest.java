@@ -1,7 +1,7 @@
 package tobyspring.splearn.domain;
 
 // Immutable Object
-public record MemberCreateRequest(
+public record MemberRegisterRequest(
 	// record component header
 	String email,
 	String nickname,
