@@ -1,6 +1,7 @@
 package tobyspring.splearn.domain;
 
 import static org.assertj.core.api.Assertions.*;
+import static tobyspring.splearn.domain.MemberFixture.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,23 +18,9 @@ class MemberTest {
 	// @AfterAll: 클래스의 모든 테스트 실행 후 1회만 호출 (static 메서드)
 	@BeforeEach
 	void setUp() {
-		this.passwordEncoder = new PasswordEncoder() {
-			@Override
-			public String encode(String password) {
-				return password.toUpperCase();
-			}
+		this.passwordEncoder = createPasswordEncoder();
 
-			@Override
-			public boolean matches(String password, String passwordHash) {
-				return encode(password).equals(passwordHash);
-			}
-		};
-
-		MemberRegisterRequest memberRegisterRequest = new MemberRegisterRequest(
-			"toby@splearn.app",
-			"Toby",
-			"secret"
-		);
+		MemberRegisterRequest memberRegisterRequest = createMemberRegisterRequest();
 
 		member = Member.register(memberRegisterRequest, passwordEncoder);
 	}
@@ -146,9 +133,9 @@ class MemberTest {
 	@Test
 	void invalidEmail() {
 		assertThatThrownBy(() ->
-			Member.register(new MemberRegisterRequest("invalid email", "Toby", "secret"), passwordEncoder)
+			Member.register(createMemberRegisterRequest("invalid email"), passwordEncoder)
 		).isInstanceOf(IllegalArgumentException.class);
 
-		Member.register(new MemberRegisterRequest("tobyilee@gamil.com", "Toby", "secret"), passwordEncoder);
+		Member.register(createMemberRegisterRequest(), passwordEncoder);
 	}
 }

@@ -3,24 +3,45 @@ package tobyspring.splearn.domain;
 import static java.util.Objects.*;
 import static org.springframework.util.Assert.*;
 
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-// Getter, ToString 과 같은 어노테이션은 적극 활용하여 도메인이 갖는 속성 및 상태 전이 로직 가독성에 영향을 끼치지 않도록 합니다.
+// Getter, ToString 과 같은 어노테이션은 적극 활용하여
+// 도메인이 갖는 속성 및 상태 전이 로직의 가독성에 영향을 끼치지 않도록 합니다.
+@Entity
 @Getter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SuppressWarnings("NullAway.Init")  // JPA requires no-arg constructor for lazy initialization
 public class Member {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	// JPA Entity에 JPA에서 허용한 기본 타입 (String, Integer, Long ...)이 아닌
+	// Custom Type을 선언할 경우 Embedded Object로 만들어야 합니다.
+	// JPA Embedded: 해당 필드가 다른곳에서 정의된 Embeddable 타입을 내장하고 있음을 나타내며
+	// 해당 필드의 속성들이 엔티티 테이블의 컬럼으로 포함됩니다.
+	@Embedded
     private Email email;
 
     private String nickname;
 
     private String passwordHash;
 
+	// Entity 필드값을 Enum으로 사용하고 있을 경우 @Enumerated 를 붙여서 관리하는게 좋습니다.
+	// DB및 Enum의 옵션에 따라 내부 기능을 확장 가능합니다.
+	@Enumerated(EnumType.STRING)
     private MemberStatus status;
 
     public static Member register(

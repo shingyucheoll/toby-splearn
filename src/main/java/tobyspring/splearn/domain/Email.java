@@ -2,6 +2,10 @@ package tobyspring.splearn.domain;
 
 import java.util.regex.Pattern;
 
+import jakarta.persistence.Embeddable;
+
+// Embedding이 가능한 Type임을 명시해주어야 합니다.
+@Embeddable
 public record Email(
     String address
 ) {
