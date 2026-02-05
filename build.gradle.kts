@@ -24,8 +24,8 @@ tasks.withType<JavaCompile> {
         error("NullAway")                            // NullAway의 검사 결과를 에러 레벨로 설정합니다. 기본값 : 경고(warning)
         option("NullAway:JSpecifyMode", "true")     // https://github.com/uber/NullAway/wiki/JSpecify-Support JSpecify 표준을 사용합니다
     }
-    // Keep a JDK 17 baseline
-    options.release = 17
+
+    options.release = 25
 }
 
 configurations {
