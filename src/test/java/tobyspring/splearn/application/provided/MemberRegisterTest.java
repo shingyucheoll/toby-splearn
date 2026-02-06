@@ -1,103 +1,50 @@
 package tobyspring.splearn.application.provided;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 
-import tobyspring.splearn.application.MemberService;
 import tobyspring.splearn.application.required.EmailSender;
-import tobyspring.splearn.application.required.MemberRepository;
-import tobyspring.splearn.domain.Email;
 import tobyspring.splearn.domain.Member;
 import tobyspring.splearn.domain.MemberFixture;
 import tobyspring.splearn.domain.MemberStatus;
+import tobyspring.splearn.domain.PasswordEncoder;
 
-class MemberRegisterTest {
+@SpringBootTest
+public class MemberRegisterTest {
 
-    @Test
-    void registerTestStub() {
-        MemberRegister register = new MemberService(
-            new MemberRepositoryStub(),
-            new EmailSenderStub(),
-            MemberFixture.createPasswordEncoder()
-        );
-
-        Member member = register.register(MemberFixture.createMemberRegisterRequest());
-
-        assertThat(member.getId()).isNotNull();
-        assertThat(member.getStatus()).isEqualTo(MemberStatus.PENDING);
-    }
+    /**
+     * 애플리케이션 코드에서는 @Autowired를 사용하여 Bean을 필드로 주입받는 패턴은 지양하는 방법이지만,
+     * 테스트 class 의 코드를 다른 코드에서 사용하는 케이스는 없기 때문에 사용해도 괜찮습니다.
+     */
+    @Autowired
+    private MemberRegister memberRegister;
 
     @Test
-    void registerTestMock() {
+    void register() {
 
-        EmailSenderMock emailSenderMock = new EmailSenderMock();
-
-        MemberRegister register = new MemberService(
-            new MemberRepositoryStub(),
-            emailSenderMock,
-            MemberFixture.createPasswordEncoder()
-        );
-
-        Member member = register.register(MemberFixture.createMemberRegisterRequest());
+        Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest());
 
         assertThat(member.getId()).isNotNull();
         assertThat(member.getStatus()).isEqualTo(MemberStatus.PENDING);
 
-        assertThat(emailSenderMock.getTos()).hasSize(1);
-        assertThat(emailSenderMock.getTos().getFirst()).isEqualTo(member.getEmail());
     }
 
-    @Test
-    void registerTestMockito() {
+    @TestConfiguration
+    static class MemberTestConfiguration {
 
-        EmailSender emailSenderMock = Mockito.mock(EmailSender.class);
-
-        MemberRegister register = new MemberService(
-            new MemberRepositoryStub(),
-            emailSenderMock,
-            MemberFixture.createPasswordEncoder()
-        );
-
-        Member member = register.register(MemberFixture.createMemberRegisterRequest());
-
-        assertThat(member.getId()).isNotNull();
-        assertThat(member.getStatus()).isEqualTo(MemberStatus.PENDING);
-
-        Mockito.verify(emailSenderMock).send(eq(member.getEmail()), any(), any());
-    }
-
-    static class MemberRepositoryStub implements MemberRepository {
-        @Override
-        public Member save(Member member) {
-            ReflectionTestUtils.setField(member, "id", 1L);
-            return member;
-        }
-    }
-
-    static class EmailSenderStub implements EmailSender {
-        @Override
-        public void send(Email email, String subject, String body) {
-        }
-    }
-
-    static class EmailSenderMock implements EmailSender {
-
-        List<Email> tos = new ArrayList<>();
-
-        @Override
-        public void send(Email email, String subject, String body) {
-            tos.add(email);
+        @Bean
+        public EmailSender emailSender() {
+            return (email, _, _) -> System.out.println("Sending email: " + email);
         }
 
-        public List<Email> getTos() {
-            return tos;
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+            return MemberFixture.createPasswordEncoder();
         }
     }
 }

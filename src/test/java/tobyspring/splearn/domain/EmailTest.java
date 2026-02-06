@@ -15,5 +15,4 @@ class EmailTest {
         // 단 Class 를 사용하여 값 객체를 생성할 때는 Equals & Hashcode를 구현해서 사용해야 합니다. ( lombok - @EqualsAndHashCode )
         assertThat(email1).isEqualTo(email2);
     }
-
 }
