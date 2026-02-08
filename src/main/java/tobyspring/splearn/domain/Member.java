@@ -65,12 +65,17 @@ public class Member {
     }
 
     public void activate() {
-        // org.springframework.util.Assert; 라이브러리는
-        // Apache Commons, Google Guava 와 다를 것 없는 유틸리티 클래스로 사용해도 좋습니다.
+		/**
+		 * org.springframework.util.Assert; 라이브러리는
+		 * Apache Commons, Google Guava 와 다를 것 없는 유틸리티 클래스로 사용해도 좋습니다.
+		 */
+
         // 상태가 pending이 아닌 경우 - state(!expression, "error Msg") 형태
         state(status == MemberStatus.PENDING, "PENDING 상태가 아닙니다.");
 
-        // 제거할 수 있는 코드
+        /**
+         * 제거할 수 있는 코드
+         */
         // if (status != MemberStatus.PENDING) {
         // 	throw new IllegalStateException("PENDING 상태가 아닙니다.");
         // }
