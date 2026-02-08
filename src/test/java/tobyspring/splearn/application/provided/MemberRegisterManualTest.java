@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -79,7 +80,12 @@ class MemberRegisterManualTest {
             ReflectionTestUtils.setField(member, "id", 1L);
             return member;
         }
-    }
+
+		@Override
+		public Optional<Member> findByEmail(Email email) {
+			return Optional.empty();
+		}
+	}
 
     static class EmailSenderStub implements EmailSender {
         @Override
