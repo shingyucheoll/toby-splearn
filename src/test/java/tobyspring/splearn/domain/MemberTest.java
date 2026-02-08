@@ -94,24 +94,24 @@ class MemberTest {
 
 	@Test
 	void verifyPassword() {
-		assertThat(member.verifyPassword("secret", passwordEncoder)).isTrue();
-		assertThat(member.verifyPassword("hello", passwordEncoder)).isFalse();
+		assertThat(member.verifyPassword("verySecret", passwordEncoder)).isTrue();
+		assertThat(member.verifyPassword("verySecret2", passwordEncoder)).isFalse();
 	}
 
 	@Test
 	void changeNickname() {
-		assertThat(member.getNickname()).isEqualTo("Toby");
-
-		member.changeNickname("Charlie");
-
 		assertThat(member.getNickname()).isEqualTo("Charlie");
+
+		member.changeNickname("Charlie2");
+
+		assertThat(member.getNickname()).isEqualTo("Charlie2");
 	}
 
 	@Test
 	void changePassword() {
-		member.changePassword("verySecret", passwordEncoder);
+		member.changePassword("verySecret2", passwordEncoder);
 
-		assertThat(member.verifyPassword("verySecret", passwordEncoder)).isTrue();
+		assertThat(member.verifyPassword("verySecret2", passwordEncoder)).isTrue();
 
 		System.out.println(member.getPasswordHash());
 

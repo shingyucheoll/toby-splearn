@@ -1,7 +1,9 @@
 package tobyspring.splearn.application;
 
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import tobyspring.splearn.application.provided.MemberRegister;
 import tobyspring.splearn.application.required.EmailSender;
@@ -13,27 +15,27 @@ import tobyspring.splearn.domain.MemberRegisterRequest;
 import tobyspring.splearn.domain.PasswordEncoder;
 
 @Service
+@Transactional
+@Validated
 @RequiredArgsConstructor
 public class MemberService implements MemberRegister {
 
-    private final MemberRepository memberRepository;
-    private final EmailSender emailSender;
-    private final PasswordEncoder passwordEncoder;
+	private final MemberRepository memberRepository;
+	private final EmailSender emailSender;
+	private final PasswordEncoder passwordEncoder;
 
-    @Override
-    public Member register(MemberRegisterRequest registerRequest) {
-
+	@Override
+	public Member register(MemberRegisterRequest registerRequest) {
 		checkDuplicateEmail(registerRequest);
 
-        Member member = Member.register(registerRequest, passwordEncoder);
+		Member member = Member.register(registerRequest, passwordEncoder);
 
-        memberRepository.save(member);
+		memberRepository.save(member);
 
-        sendWelcomeEmail(member);
+		sendWelcomeEmail(member);
 
-        return member;
-    }
-
+		return member;
+	}
 
 	private void checkDuplicateEmail(MemberRegisterRequest registerRequest) {
 		if (memberRepository.findByEmail(new Email(registerRequest.email())).isPresent()) {

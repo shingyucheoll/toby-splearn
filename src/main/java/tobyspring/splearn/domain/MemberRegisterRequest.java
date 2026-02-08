@@ -1,10 +1,17 @@
 package tobyspring.splearn.domain;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
+
 // Immutable Object
 public record MemberRegisterRequest(
-	// record component header
+	@Email
 	String email,
+
+	@Size(min = 5, max = 20)
 	String nickname,
+
+	@Size(min = 8, max = 100)
 	String password
 ) {
 }

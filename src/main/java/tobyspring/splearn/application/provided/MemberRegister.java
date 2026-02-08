@@ -1,5 +1,6 @@
 package tobyspring.splearn.application.provided;
 
+import jakarta.validation.Valid;
 import tobyspring.splearn.domain.Member;
 import tobyspring.splearn.domain.MemberRegisterRequest;
 
@@ -15,5 +16,5 @@ public interface MemberRegister {
 
 	Domain Layer에서 Entity를 반환하는것은 크게 문제될 것 없다.
 	 */
-	Member register(MemberRegisterRequest registerRequest);
+	Member register(@Valid MemberRegisterRequest registerRequest);
 }
