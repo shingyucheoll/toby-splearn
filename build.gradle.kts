@@ -18,11 +18,15 @@ java {
 }
 
 tasks.withType<JavaCompile> {
-    options.errorprone  {
-        disableAllChecks = true                                     // Error Prone 의 기능중 NullAway 만 사용하도록 다른 검사를 비활성화 합니다.
+    options.errorprone {
+        disableAllChecks =
+            true                                     // Error Prone 의 기능중 NullAway 만 사용하도록 다른 검사를 비활성화 합니다.
         option("NullAway:OnlyNullMarked", "true")   // @NullMarked 어노테이션이 명시적으로 붙어있는 클래스/패키지/모듈에서만 null 검사를 수행합니다.
         error("NullAway")                            // NullAway의 검사 결과를 에러 레벨로 설정합니다. 기본값 : 경고(warning)
-        option("NullAway:JSpecifyMode", "true")     // https://github.com/uber/NullAway/wiki/JSpecify-Support JSpecify 표준을 사용합니다
+        option(
+            "NullAway:JSpecifyMode",
+            "true"
+        )     // https://github.com/uber/NullAway/wiki/JSpecify-Support JSpecify 표준을 사용합니다
     }
 
     options.release = 25
@@ -37,6 +41,8 @@ configurations {
 repositories {
     mavenCentral()
 }
+
+val mockitoAgent: Configuration = configurations.create("mockitoAgent")
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-h2console")
@@ -54,8 +60,14 @@ dependencies {
     implementation("org.jspecify:jspecify:1.0.0") // https://jspecify.dev/
     errorprone("com.google.errorprone:error_prone_core:2.42.0") // https://github.com/google/error-prone
     errorprone("com.uber.nullaway:nullaway:0.12.12") // https://github.com/uber/NullAway
+    testImplementation("org.junit-pioneer:junit-pioneer:2.3.0")
+    mockitoAgent("org.mockito:mockito-core:5.18.0") {
+        isTransitive = false
+    }
+
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    jvmArgs("-javaagent:${mockitoAgent.asPath}")
 }

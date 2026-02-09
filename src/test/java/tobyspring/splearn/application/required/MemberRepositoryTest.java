@@ -2,7 +2,6 @@ package tobyspring.splearn.application.required;
 
 import static org.assertj.core.api.Assertions.*;
 import static tobyspring.splearn.domain.MemberFixture.*;
-import static tobyspring.splearn.domain.MemberFixture.createPasswordEncoder;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,8 +1,6 @@
 package tobyspring.splearn.application.provided;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,64 +19,64 @@ import tobyspring.splearn.domain.MemberStatus;
 @SpringBootTest
 @Transactional
 @Import(SplearnTestConfiguration.class)
-public record MemberRegisterTest(
-	MemberRegister memberRegister,
-	EntityManager entitymanager
+record MemberRegisterTest(
+    MemberRegister memberRegister,
+    EntityManager entitymanager
 ) {
 
-	@Test
-	void register() {
-		Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest());
+    @Test
+    void register() {
+        Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest());
 
-		assertThat(member.getId()).isNotNull();
-		assertThat(member.getStatus()).isEqualTo(MemberStatus.PENDING);
-	}
+        assertThat(member.getId()).isNotNull();
+        assertThat(member.getStatus()).isEqualTo(MemberStatus.PENDING);
+    }
 
-	@Test
-	void duplicateEmailFail() {
-		memberRegister.register(MemberFixture.createMemberRegisterRequest());
+    @Test
+    void duplicateEmailFail() {
+        memberRegister.register(MemberFixture.createMemberRegisterRequest());
 
-		assertThatThrownBy(() -> memberRegister.register(MemberFixture.createMemberRegisterRequest()))
-			.isInstanceOf(DuplicateEmailException.class);
-	}
+        assertThatThrownBy(() -> memberRegister.register(MemberFixture.createMemberRegisterRequest()))
+            .isInstanceOf(DuplicateEmailException.class);
+    }
 
-	@Test
-	void activate() {
-		Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest());
-		
-		entitymanager.flush();
-		entitymanager.clear();
+    @Test
+    void activate() {
+        Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest());
 
-		member = memberRegister.activate(member.getId());
+        entitymanager.flush();
+        entitymanager.clear();
 
-		entitymanager.flush();
+        member = memberRegister.activate(member.getId());
 
-		assertThat(member.getStatus()).isEqualTo(MemberStatus.ACTIVATE);
-	}
+        entitymanager.flush();
 
-	@Test
-	void memberRegisterRequestFail() {
-		invalidRequest(new MemberRegisterRequest(
-			"toby@splearn.app",
-			"Toby",
-			"secret"
-		));
+        assertThat(member.getStatus()).isEqualTo(MemberStatus.ACTIVATE);
+    }
 
-		invalidRequest(new MemberRegisterRequest(
-			"toby@splearn.app",
-			"Charlie__________________",
-			"longsecret"
-		));
+    @Test
+    void memberRegisterRequestFail() {
+        checkValidation(new MemberRegisterRequest(
+            "toby@splearn.app",
+            "Toby",
+            "secret"
+        ));
 
-		invalidRequest(new MemberRegisterRequest(
-			"toby.splearn.app",
-			"Chrrr",
-			"longsecret"
-		));
-	}
+        checkValidation(new MemberRegisterRequest(
+            "toby@splearn.app",
+            "Charlie__________________",
+            "longsecret"
+        ));
 
-	private void invalidRequest(MemberRegisterRequest invalid) {
-		assertThatThrownBy(() -> memberRegister.register(invalid))
-		    .isInstanceOf(ConstraintViolationException.class);
-	}
+        checkValidation(new MemberRegisterRequest(
+            "toby.splearn.app",
+            "Chrrr",
+            "longsecret"
+        ));
+    }
+
+    private void checkValidation(MemberRegisterRequest invalid) {
+        assertThatThrownBy(() -> memberRegister.register(invalid))
+            .isInstanceOf(ConstraintViolationException.class);
+    }
 }
