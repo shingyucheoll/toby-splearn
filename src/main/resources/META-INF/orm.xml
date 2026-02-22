@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://www.hibernate.org/xsd/orm/mapping"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://www.hibernate.org/xsd/orm/mapping
+                                     https://hibernate.org/xsd/orm/mapping/mapping-3.1.0.xsd">
+    <access>FIELD</access>
+
+    <mapped-superclass class="tobyspring.splearn.domain.AbstractEntity">
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+        </attributes>
+    </mapped-superclass>
+
+    <entity class="tobyspring.splearn.domain.Member">
+        <table name="MEMBER">
+            <unique-constraint name="UK_MEMBER_EMAIL_ADDRESS">
+                <column-name>email_address</column-name>
+            </unique-constraint>
+        </table>
+
+        <attributes>
+            <basic name="nickname">
+                <column length="100" nullable="false"/>
+            </basic>
+
+            <basic name="passwordHash">
+                <column length="200" nullable="false"/>
+            </basic>
+
+            <basic name="status">
+                <column length="50" nullable="false"/>
+                <enumerated>STRING</enumerated>
+            </basic>
+            <embedded name="email">
+            </embedded>
+        </attributes>
+    </entity>
+
+    <embeddable class="tobyspring.splearn.domain.Email">
+        <attributes>
+            <basic name="address">
+                <column name="email_address" length="150" nullable="false"/>
+            </basic>
+        </attributes>
+    </embeddable>
+</entity-mappings>
