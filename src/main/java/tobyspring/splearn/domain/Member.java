@@ -7,6 +7,7 @@ import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import lombok.ToString;
 
 @Entity
 @Getter
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SuppressWarnings("NullAway.Init")
 @NaturalIdCache
@@ -28,6 +29,9 @@ public class Member extends AbstractEntity {
 	private String passwordHash;
 
 	private MemberStatus status;
+
+	@OneToOne
+	private MemberDetail memberDetail;
 
 	public static Member register(
 		MemberRegisterRequest registerRequest,
