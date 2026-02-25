@@ -1,7 +1,7 @@
-package tobyspring.splearn.domain;
+package tobyspring.splearn.domain.member;
 
 import static org.assertj.core.api.Assertions.*;
-import static tobyspring.splearn.domain.MemberFixture.*;
+import static tobyspring.splearn.domain.member.MemberFixture.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,31 +29,17 @@ class MemberTest {
 	void registerMember() {
 
 		assertThat(member.getStatus()).isEqualTo(MemberStatus.PENDING);
+		// Clock을 사용하여 메서드가 실행되기 전 시간을 제어하여 동일한 시간 정보를 통해 테스트를 할 수 있지만
+		// 간단하게 값이 설정되었는지만 체크하여 검증합니다.
+		assertThat(member.getDetail().getRegisteredAt()).isNotNull();
 	}
 
-	/*
-	Live Template - 적극 사용 권장 ( 환경 설정 - 라이브 템플릿 - Java )
-	모든 설정에 import 는 모두 추가
-
-	1. @Test 어노테이션 및 method 생성
-
-	단축키: te, 사용 위치: Declaration (선언)
-	@org.junit.jupiter.api.Test	 -> 사용하는 어노테이션 및 기능의 라이브러리 모두 명시할 경우 자동으로 import 후 선언됩니다.
-	void $TESTNAME$(){			 -> $ $ 형태로 변수를 선언할 경우 cursor의 위치가 자동으로 이동됩니다.
-    $END$					     -> 모든 변수를 선언한 이후 마지막 cursor의 위치 명시
-	}
-
-	2. assertThat import 및 선언
-
-	단축키: asj , 사용 위치: statement (구문)
-	org.assertj.core.api.Assertions.assertThat($ACTUAL$)$END$
-
-	 */
 	@Test
 	void activate() {
 		member.activate();
 
 		assertThat(member.getStatus()).isEqualTo(MemberStatus.ACTIVATE);
+		assertThat(member.getDetail().getActivatedAt()).isNotNull();
 	}
 
 	@Test
@@ -76,6 +62,7 @@ class MemberTest {
 
 		// then
 		assertThat(member.getStatus()).isEqualTo(MemberStatus.DEACTIVATED);
+		assertThat(member.getDetail().getDeactivatedAt()).isNotNull();
 	}
 
 	@Test
