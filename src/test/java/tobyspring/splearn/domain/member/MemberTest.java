@@ -125,4 +125,17 @@ class MemberTest {
 
 		Member.register(createMemberRegisterRequest(), passwordEncoder);
 	}
+
+	@Test
+	void updateInfo() {
+		member.activate();
+
+		var request = new MemberInfoUpdateRequest("Shin", "shin123", "자기소개입니다.");
+
+		member.updateInfo(new MemberInfoUpdateRequest("Shin", "shin123", "자기소개입니다."));
+
+		assertThat(member.getNickname()).isEqualTo(request.nickname());
+		assertThat(member.getDetail().getProfile().address()).isEqualTo(request.profileAddress());
+		assertThat(member.getDetail().getIntroduction()).isEqualTo(request.introduction());
+	}
 }

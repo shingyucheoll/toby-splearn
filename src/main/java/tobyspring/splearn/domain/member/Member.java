@@ -3,6 +3,8 @@ package tobyspring.splearn.domain.member;
 import static java.util.Objects.*;
 import static org.springframework.util.Assert.*;
 
+import java.util.Objects;
+
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 
@@ -75,6 +77,13 @@ public class Member extends AbstractEntity {
 
 	public void changeNickname(String nickname) {
 		this.nickname = requireNonNull(nickname);
+	}
+
+	public void updateInfo(MemberInfoUpdateRequest updateRequest) {
+		this.nickname = Objects.requireNonNull(updateRequest.nickname());
+
+		this.detail.updateInfo(updateRequest);
+
 	}
 
 	public void changePassword(String password, PasswordEncoder passwordEncoder) {
