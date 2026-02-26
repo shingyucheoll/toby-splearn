@@ -1,9 +1,7 @@
 package tobyspring.splearn.domain.member;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 class ProfileTest {
