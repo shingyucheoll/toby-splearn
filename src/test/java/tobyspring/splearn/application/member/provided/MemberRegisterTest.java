@@ -13,6 +13,7 @@ import tobyspring.splearn.SplearnTestConfiguration;
 import tobyspring.splearn.domain.member.DuplicateEmailException;
 import tobyspring.splearn.domain.member.Member;
 import tobyspring.splearn.domain.member.MemberFixture;
+import tobyspring.splearn.domain.member.MemberInfoUpdateRequest;
 import tobyspring.splearn.domain.member.MemberRegisterRequest;
 import tobyspring.splearn.domain.member.MemberStatus;
 
@@ -20,63 +21,102 @@ import tobyspring.splearn.domain.member.MemberStatus;
 @Transactional
 @Import(SplearnTestConfiguration.class)
 record MemberRegisterTest(
-    MemberRegister memberRegister,
-    EntityManager entitymanager
+	MemberRegister memberRegister,
+	EntityManager entitymanager
 ) {
 
-    @Test
-    void register() {
-        Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest());
+	@Test
+	void register() {
+		Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest());
 
-        assertThat(member.getId()).isNotNull();
-        assertThat(member.getStatus()).isEqualTo(MemberStatus.PENDING);
-    }
+		assertThat(member.getId()).isNotNull();
+		assertThat(member.getStatus()).isEqualTo(MemberStatus.PENDING);
+	}
 
-    @Test
-    void duplicateEmailFail() {
-        memberRegister.register(MemberFixture.createMemberRegisterRequest());
+	@Test
+	void duplicateEmailFail() {
+		memberRegister.register(MemberFixture.createMemberRegisterRequest());
 
-        assertThatThrownBy(() -> memberRegister.register(MemberFixture.createMemberRegisterRequest()))
-            .isInstanceOf(DuplicateEmailException.class);
-    }
+		assertThatThrownBy(() -> memberRegister.register(MemberFixture.createMemberRegisterRequest()))
+			.isInstanceOf(DuplicateEmailException.class);
+	}
 
-    @Test
-    void activate() {
-        Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest());
+	@Test
+	void activate() {
+		Member member = registerMember();
 
-        entitymanager.flush();
-        entitymanager.clear();
+		member = memberRegister.activate(member.getId());
 
-        member = memberRegister.activate(member.getId());
+		entitymanager.flush();
 
-        entitymanager.flush();
+		assertThat(member.getStatus()).isEqualTo(MemberStatus.ACTIVATE);
+		assertThat(member.getDetail().getActivatedAt()).isNotNull();
+	}
 
-        assertThat(member.getStatus()).isEqualTo(MemberStatus.ACTIVATE);
-    }
+	@Test
+	void deactivate() {
+		Member member = registerMember();
 
-    @Test
-    void memberRegisterRequestFail() {
-        checkValidation(new MemberRegisterRequest(
-            "toby@splearn.app",
-            "Toby",
-            "secret"
-        ));
+		memberRegister.activate(member.getId());
 
-        checkValidation(new MemberRegisterRequest(
-            "toby@splearn.app",
-            "Charlie__________________",
-            "longsecret"
-        ));
+		entitymanager.flush();
+		entitymanager.clear();
 
-        checkValidation(new MemberRegisterRequest(
-            "toby.splearn.app",
-            "Chrrr",
-            "longsecret"
-        ));
-    }
+		member = memberRegister.deactivate(member.getId());
 
-    private void checkValidation(MemberRegisterRequest invalid) {
-        assertThatThrownBy(() -> memberRegister.register(invalid))
-            .isInstanceOf(ConstraintViolationException.class);
-    }
+		assertThat(member.getStatus()).isEqualTo(MemberStatus.DEACTIVATED);
+		assertThat(member.getDetail().getDeactivatedAt()).isNotNull();
+	}
+
+	@Test
+	void updateInfo() {
+		Member member = registerMember();
+
+		memberRegister.activate(member.getId());
+
+		entitymanager.flush();
+		entitymanager.clear();
+
+		member = memberRegister.updateInfo(
+			member.getId(),
+			new MemberInfoUpdateRequest("ShinGyuCheol", "shin123", "자기소개입니다.")
+		);
+
+		assertThat(member.getDetail().getProfile().address()).isEqualTo("shin123");
+	}
+
+	private Member registerMember() {
+		Member member = memberRegister.register(MemberFixture.createMemberRegisterRequest());
+
+		entitymanager.flush();
+		entitymanager.clear();
+
+		return member;
+	}
+
+	@Test
+	void memberRegisterRequestFail() {
+		checkValidation(new MemberRegisterRequest(
+			"toby@splearn.app",
+			"Toby",
+			"secret"
+		));
+
+		checkValidation(new MemberRegisterRequest(
+			"toby@splearn.app",
+			"Charlie__________________",
+			"longsecret"
+		));
+
+		checkValidation(new MemberRegisterRequest(
+			"toby.splearn.app",
+			"Chrrr",
+			"longsecret"
+		));
+	}
+
+	private void checkValidation(MemberRegisterRequest invalid) {
+		assertThatThrownBy(() -> memberRegister.register(invalid))
+			.isInstanceOf(ConstraintViolationException.class);
+	}
 }

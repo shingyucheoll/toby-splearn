@@ -2,6 +2,7 @@ package tobyspring.splearn.application.member.provided;
 
 import jakarta.validation.Valid;
 import tobyspring.splearn.domain.member.Member;
+import tobyspring.splearn.domain.member.MemberInfoUpdateRequest;
 import tobyspring.splearn.domain.member.MemberRegisterRequest;
 
 /**
@@ -15,4 +16,8 @@ public interface MemberRegister {
 
 	// Client측에서 알고있는 식별자 ID를 사용하여 처리합니다.
 	Member activate(Long memberId);
+
+	Member deactivate(Long memberId);
+
+	Member updateInfo(Long memberId, @Valid MemberInfoUpdateRequest memberInfoUpdateRequest);
 }

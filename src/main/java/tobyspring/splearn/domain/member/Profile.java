@@ -2,9 +2,6 @@ package tobyspring.splearn.domain.member;
 
 import java.util.regex.Pattern;
 
-import jakarta.persistence.Embeddable;
-
-@Embeddable
 public record Profile(
     String address
 ) {

@@ -8,10 +8,7 @@ import java.util.Objects;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +18,7 @@ import tobyspring.splearn.domain.shared.Email;
 
 @Entity
 @Getter
-@ToString(callSuper = true, exclude = "detail")	// ToString 무한루프 방지
+@ToString(callSuper = true, exclude = "detail")    // ToString 무한루프 방지
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SuppressWarnings("NullAway.Init")
 @NaturalIdCache
@@ -36,7 +33,6 @@ public class Member extends AbstractEntity {
 
 	private MemberStatus status;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private MemberDetail detail;
 
 	public static Member register(
@@ -83,7 +79,6 @@ public class Member extends AbstractEntity {
 		this.nickname = Objects.requireNonNull(updateRequest.nickname());
 
 		this.detail.updateInfo(updateRequest);
-
 	}
 
 	public void changePassword(String password, PasswordEncoder passwordEncoder) {
