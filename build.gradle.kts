@@ -50,15 +50,21 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.security:spring-security-core")
+    implementation("org.jspecify:jspecify:1.0.0") // https://jspecify.dev/
+
     compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-docker-compose")
     runtimeOnly("com.h2database:h2")
     runtimeOnly("com.mysql:mysql-connector-j")
+
     annotationProcessor("org.projectlombok:lombok")
+    testAnnotationProcessor("org.projectlombok:lombok")
+
+    testCompileOnly("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    implementation("org.jspecify:jspecify:1.0.0") // https://jspecify.dev/
+
     errorprone("com.google.errorprone:error_prone_core:2.42.0") // https://github.com/google/error-prone
     errorprone("com.uber.nullaway:nullaway:0.12.12") // https://github.com/uber/NullAway
     testImplementation("org.junit-pioneer:junit-pioneer:2.3.0")

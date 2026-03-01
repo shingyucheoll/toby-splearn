@@ -1,5 +1,7 @@
 package tobyspring.splearn.domain.member;
 
+import org.springframework.test.util.ReflectionTestUtils;
+
 // Member & MemberRepository 여러곳에서 사용되는 Member Fixture 생성자를 관리하는 Test Utility Class를 생성합니다.
 public class MemberFixture {
 
@@ -29,4 +31,13 @@ public class MemberFixture {
 		};
 	}
 
+	public static Member createMember() {
+		return Member.register(createMemberRegisterRequest(), createPasswordEncoder());
+	}
+
+	public static Member createMember(Long id) {
+		Member member = Member.register(createMemberRegisterRequest(), createPasswordEncoder());
+		ReflectionTestUtils.setField(member, "id", id);
+		return member;
+	}
 }
