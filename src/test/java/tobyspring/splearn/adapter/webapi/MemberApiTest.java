@@ -30,7 +30,7 @@ import tools.jackson.databind.ObjectMapper;
 @AutoConfigureMockMvc
 @Transactional
 @RequiredArgsConstructor
-public class MemberApiTest {
+class MemberApiTest {
 	final MockMvcTester mvcTester;
 	final ObjectMapper objectMapper;
 	final MemberRepository memberRepository;

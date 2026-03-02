@@ -68,6 +68,9 @@ dependencies {
     errorprone("com.google.errorprone:error_prone_core:2.42.0") // https://github.com/google/error-prone
     errorprone("com.uber.nullaway:nullaway:0.12.12") // https://github.com/uber/NullAway
     testImplementation("org.junit-pioneer:junit-pioneer:2.3.0")
+
+    testImplementation("com.tngtech.archunit:archunit-junit5:1.4.1")
+
     mockitoAgent("org.mockito:mockito-core:5.18.0") {
         isTransitive = false
     }
